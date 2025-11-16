@@ -1,0 +1,48 @@
+--==============================
+-- Discord Webhook Messenger
+-- ComputerCraft / CC:Tweaked
+--==============================
+
+-- >>> SET YOUR WEBHOOK URL HERE <<<
+local webhook = "YOUR_WEBHOOK_URL_HERE"
+
+local function sendDiscordMessage(message)
+    if webhook == "" or webhook == "YOUR_WEBHOOK_URL_HERE" then
+        print("ERROR: Please set your webhook URL in the script!")
+        return
+    end
+
+    local body = textutils.serializeJSON({ content = message })
+
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+
+    local response = http.post(webhook, body, headers)
+
+    if response then
+        print("Message sent! Server responded:")
+        print(response.readAll())
+    else
+        print("Failed to send message! (HTTP POST error)")
+    end
+end
+
+---- MAIN LOOP ----
+print("Discord Messenger Active.")
+print("Type a message and press ENTER to send.")
+print("Type 'exit' to quit.")
+
+while true do
+    io.write("> ")
+    local input = read()
+
+    if input == "exit" then
+        print("Closing program...")
+        break
+    end
+
+    if input ~= "" then
+        sendDiscordMessage(input)
+    end
+end
